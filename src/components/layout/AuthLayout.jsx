@@ -11,7 +11,7 @@ export default function AuthLayout({ children, header }) {
         <body class="h-full">
         ```
       */}
-      <div className="flex min-h-screen bg-gray-100 flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="flex min-h-screen bg-gray-500 flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <img
             alt="Your Company"
@@ -19,7 +19,7 @@ export default function AuthLayout({ children, header }) {
             className="mx-auto h-10 w-auto"
           />
           <h2 className="mt-3 text-center text-2xl font-bold tracking-tight text-gray-900">
-            Manager
+            Marketer
           </h2>
           <h2 className="mt-2 text-center text-lg/9 font-bold tracking-tight text-gray-900">
             {header}

@@ -32,7 +32,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           script: |
             # Navigate to deployment directory
-            cd ~/public_html
+            cd ~/staging.divineglobalgrowth.com
             
             # Initialize Git repository if not already done
             if [ ! -d ".git" ]; then
