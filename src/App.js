@@ -80,21 +80,21 @@ const App = () => {
         <Route exact path="/" element={<Dashboard />} />
         <Route exact path="/branches" element={<Branches />} />
         <Route exact path="/branches/:id" element={<Branch />} />
-        <Route exact path="/employees" element={<Employees />} />
-        <Route exact path="/employee/:id" element={<Employee />} />
+        {/* <Route exact path="/employees" element={<Employees />} /> */}
+        {/* <Route exact path="/employee/:id" element={<Employee />} /> */}
         <Route exact path="/customers" element={<Customers />} />
         <Route exact path="/customers/new" element={<NewCustomer />} />
         <Route exact path="/customer/:id" element={<Customer />} />
         <Route exact path="/customer/:id/edit" element={<CustomerEdit />} />
         <Route exact path="/customer/:id/deposit" element={<CustomerDeposit />} />
-        <Route exact path="/customer/:id/withdraw" element={<CustomerWithdraw />} />
+        {/* <Route exact path="/customer/:id/withdraw" element={<CustomerWithdraw />} /> */}
         <Route exact path="/customer/:id/commission" element={<CustomerDeductCommission/>} />
         <Route exact path="/transactions" element={<Transactions />} />
         <Route exact path="/deposits" element={<Deposit />} />
-        <Route exact path="/withdrawals" element={<Withdrawal />} />
+        {/* <Route exact path="/withdrawals" element={<Withdrawal />} /> */}
         <Route exact path="/commissions" element={<Commission />} />
-        <Route exact path="/transfers" element={<Transfer />} />
-        <Route exact path="/expenses" element={<Expenses />} />
+        {/* <Route exact path="/transfers" element={<Transfer />} /> */}
+        {/* <Route exact path="/expenses" element={<Expenses />} /> */}
         <Route exact path="/loans" element={<Wallets />} />
         <Route exact path='*' element={<NotFoundContainer/>} />
         <Route exact path='auth/*' element={<AuthContainer />} />

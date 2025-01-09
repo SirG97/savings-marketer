@@ -37,7 +37,7 @@ jobs:
             # Initialize Git repository if not already done
             if [ ! -d ".git" ]; then
               git init
-              git remote add origin https://github.com/SirG97/savings-manager.git
+              git remote add origin https://github.com/SirG97/savings-marketer.git
             fi
 
             # Pull latest code from the staging branch
