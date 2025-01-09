@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import Authlayout from "../../components/layout/AuthLayout";
+import Button from "../../components/buttons/Button";
 import { loginUser } from "../../apis/Authentication";
 import {
   setUserInfo,
@@ -9,11 +10,13 @@ import {
   setLoginState,
 } from "../../redux-store/AuthSlice";
 import { toast } from "sonner";
+import { useState } from "react";
 
 export default function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const selector = useSelector((state) => state.auth)
+  const [isLoading, setIsLoading] = useState(false)
   const {
     register,
     handleSubmit,
@@ -22,6 +25,7 @@ export default function Login() {
   } = useForm();
 
   const handleLogin = (data) => {
+    setIsLoading(true)
     loginUser(dispatch, data).then((resp) => {
       if (resp?.data?.status === "success") {
         let user = resp.data?.data.user;
@@ -38,8 +42,10 @@ export default function Login() {
           return;
         }
         navigate("/");
+        setIsLoading(false)
       } else {
         toast.error(resp.response?.data?.data?.message);
+        setIsLoading(false)
       }
     });
   };
@@ -85,22 +91,23 @@ export default function Login() {
 
               <div className="flex items-center justify-end">
                 <div className="text-sm/6">
-                  <a
+                  {/* <a
                     href="#"
                     className="font-semibold text-indigo-600 hover:text-indigo-500"
                   >
                     Forgot password?
-                  </a>
+                  </a> */}
                 </div>
               </div>
 
               <div>
-                <button
+                <Button
+                  loading={isLoading}
                   type="submit"
-                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Sign in
-                </button>
+                </Button>
               </div>
             </form>
           </div>

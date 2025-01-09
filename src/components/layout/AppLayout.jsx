@@ -63,12 +63,12 @@ export default function AppLayout({ children }) {
     //   icon: Square3Stack3DIcon,
     //   current: false,
     // },
-    {
-      name: "Employees",
-      href: "/employees",
-      icon: UsersIcon,
-      current: false,
-    },
+    // {
+    //   name: "Employees",
+    //   href: "/employees",
+    //   icon: UsersIcon,
+    //   current: false,
+    // },
     {
       name: "Customers",
       href: "/customers",
@@ -81,30 +81,30 @@ export default function AppLayout({ children }) {
       icon: BanknotesIcon,
       current: false,
     },
-    {
-      name: "Withdrawals",
-      href: "/withdrawals",
-      icon: CreditCardIcon,
-      current: false,
-    },
-    {
-      name: "Transfers",
-      href: "/transfers",
-      icon: ScaleIcon,
-      current: false,
-    },
+    // {
+    //   name: "Withdrawals",
+    //   href: "/withdrawals",
+    //   icon: CreditCardIcon,
+    //   current: false,
+    // },
+    // {
+    //   name: "Transfers",
+    //   href: "/transfers",
+    //   icon: ScaleIcon,
+    //   current: false,
+    // },
     {
       name: "Commissions",
       href: "/commissions",
       icon: TrophyIcon,
       current: false,
     },
-    {
-      name: "Expenses",
-      href: "/expenses",
-      icon: TicketIcon,
-      current: false,
-    },
+    // {
+    //   name: "Expenses",
+    //   href: "/expenses",
+    //   icon: TicketIcon,
+    //   current: false,
+    // },
   ]);
 
   useEffect(() => {
