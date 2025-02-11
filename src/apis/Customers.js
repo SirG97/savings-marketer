@@ -6,7 +6,6 @@ import {
 import axios from "axios";
 
 export const getCustomers = async (dispatch, id = undefined, params) => {
-  
   dispatch(actionStart());
   try {
     let url;
@@ -15,19 +14,97 @@ export const getCustomers = async (dispatch, id = undefined, params) => {
     } else {
       url = process.env.REACT_APP_BASE_URL + `/user/customer/read`;
     }
-    const resp = await axios.get(url,
-      {
-        headers: {
-          accept: "application/json",
-          "content-type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        params: {
-          page: params?.page,
-          size: params?.perPage,
-        },
+    const resp = await axios.get(url, {
+      headers: {
+        accept: "application/json",
+        "content-type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
       },
-    );
+      params: {
+        page: params?.page,
+        size: params?.perPage,
+      },
+    });
+    dispatch(actionSuccess());
+    return resp;
+  } catch (err) {
+    dispatch(actionFailed());
+    return err;
+  }
+};
+
+export const getCustomersUserId = async (dispatch, id, params) => {
+  dispatch(actionStart());
+  try {
+    let url = process.env.REACT_APP_BASE_URL + `/user/customer/user_read/${id}`;
+
+    const resp = await axios.get(url, {
+      headers: {
+        accept: "application/json",
+        "content-type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      params: {
+        page: params?.page,
+        size: params?.perPage,
+      },
+    });
+    dispatch(actionSuccess());
+    return resp;
+  } catch (err) {
+    dispatch(actionFailed());
+    return err;
+  }
+};
+
+export const getCustomersBranchIdAndUserId = async (
+  dispatch,
+  branchId,
+  userId,
+  params,
+) => {
+  dispatch(actionStart());
+  try {
+    let url;
+    if (userId) {
+      url =
+        process.env.REACT_APP_BASE_URL + `/user/customer/branch_read/${userId}`;
+    } else {
+      url = process.env.REACT_APP_BASE_URL + `/user/customer/read`;
+    }
+    const resp = await axios.get(url, {
+      headers: {
+        accept: "application/json",
+        "content-type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      params: {
+        page: params?.page,
+        size: params?.perPage,
+      },
+    });
+    dispatch(actionSuccess());
+    return resp;
+  } catch (err) {
+    dispatch(actionFailed());
+    return err;
+  }
+};
+
+export const searchCustomers = async (dispatch, query) => {
+  dispatch(actionStart());
+  try {
+    let url;
+
+    url = process.env.REACT_APP_BASE_URL + `/user/search/customer/${query}`;
+
+    const resp = await axios.get(url, {
+      headers: {
+        accept: "application/json",
+        "content-type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
     dispatch(actionSuccess());
     return resp;
   } catch (err) {
@@ -37,7 +114,6 @@ export const getCustomers = async (dispatch, id = undefined, params) => {
 };
 
 export const getTransactionByType = async (dispatch, type, params) => {
-  
   dispatch(actionStart());
   try {
     const resp = await axios.get(
@@ -62,12 +138,17 @@ export const getTransactionByType = async (dispatch, type, params) => {
   }
 };
 
-export const getTransactionByTypeAndBranchId = async (dispatch,branchId, type, params) => {
-  
+export const getTransactionByTypeAndBranchId = async (
+  dispatch,
+  branchId,
+  type,
+  params,
+) => {
   dispatch(actionStart());
   try {
     const resp = await axios.get(
-      process.env.REACT_APP_BASE_URL + `/user/transaction/branch_read/${type}/${branchId}`,
+      process.env.REACT_APP_BASE_URL +
+        `/user/transaction/branch_read/${type}/${branchId}`,
       {
         headers: {
           accept: "application/json",
@@ -111,7 +192,6 @@ export const createCustomer = async (dispatch, data) => {
 };
 
 export const getCustomer = async (dispatch, id) => {
-  
   dispatch(actionStart());
   try {
     const resp = await axios.get(

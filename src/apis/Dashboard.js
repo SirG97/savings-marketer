@@ -5,14 +5,18 @@ import {
 } from "../redux-store/ActionSlice";
 import axios from "axios";
 
-export const getDashboardData = async (dispatch, id = undefined) => {
+export const getDashboardData = async (dispatch, value, id = undefined) => {
   dispatch(actionStart());
   try {
     let url;
     if (id) {
-      url = process.env.REACT_APP_BASE_URL + `/user/dashboard/read/${id}`;
+      url =
+        process.env.REACT_APP_BASE_URL +
+        `/user/dashboard/user_read/${id}?startDate=${value.startDate}&endDate=${value.endDate}`;
     } else {
-      url = process.env.REACT_APP_BASE_URL + `/user/dashboard/read`;
+      url =
+        process.env.REACT_APP_BASE_URL +
+        `/user/dashboard/read?startDate=${value.startDate}&endDate=${value.endDate}`;
     }
 
     const resp = await axios.get(url, {

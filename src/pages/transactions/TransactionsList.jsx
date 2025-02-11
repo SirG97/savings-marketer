@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { PlusIcon } from "@heroicons/react/24/solid";
+import { format } from "date-fns";
 import {
   getCustomers,
   getTransactionByType,
@@ -154,12 +155,12 @@ export default function TransactionsList() {
                     Payment method
                   </th>
 
-                  {/* <th
+                  <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Status
-                  </th> */}
+                    Date
+                  </th>
 
                   <th
                     scope="col"
@@ -198,13 +199,15 @@ export default function TransactionsList() {
                       <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                         {deposit?.branch?.name ? deposit?.branch?.name : "-"}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                      <td className="whitespace-nowrap px-3 py-5 text-center text-sm text-gray-500">
                         <StatusWithDot
                           status={getPaymentMethod(deposit.payment_method)}
                           text={deposit.payment_method}
                         />
                       </td>
-
+                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                        {format(deposit?.created_at, "yyyy-MM-dd hh:mm a")}
+                      </td>
                       <td className="relative whitespace-nowrap py-5 pl-3 pr-2 text-center text-sm font-medium sm:pr-4">
                         <button
                           onClick={() => navigate(`/deposit/${deposit.id}`)}
