@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-
+import Datepicker from "react-tailwindcss-datepicker";
+import { startOfYear, endOfYear, format } from "date-fns";
 import { getDashboardData } from "../../apis/Dashboard";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import numeral from "numeral";
 import AppLayout from "../../components/layout/AppLayout";
@@ -10,10 +11,21 @@ import AppLayout from "../../components/layout/AppLayout";
 export default function Dashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const currentDate = new Date();
+  // Get the start of the year
+  const startOfYearDate = format(startOfYear(currentDate), "yyyy-MM-dd");
+  // Get the end of the year
+  const endOfYearDate = format(endOfYear(currentDate), "yyyy-MM-dd");
+
+  const selector = JSON.parse(useSelector((state) => state.auth.userInfo));
+  const [value, setValue] = useState({
+    startDate: null ?? startOfYearDate,
+    endDate: null ?? endOfYearDate,
+  });
   const [dashboardData, setDashboardData] = useState([]);
 
   const handleDashboardData = () => {
-    getDashboardData(dispatch)
+    getDashboardData(dispatch,  value, selector.id)
       .then((resp) => {
         if (resp?.data?.success) {
           setDashboardData(resp?.data?.data);
@@ -22,18 +34,49 @@ export default function Dashboard() {
         }
       })
       .catch((error) => {
-        toast.error("An error occurred. Try again!");
+        // toast.error("An error occurred. Try again!");
       });
   };
 
   useEffect(() => {
+    console.log(value);
     handleDashboardData();
-  }, []);
+  }, [value]);
 
   return (
     <AppLayout>
       <div>
-        <h3 className="text-base font-semibold text-gray-900">All time</h3>
+        <div className="z-10 mx-1 flex filter">
+          <div className="mb-2 w-64">
+            <Datepicker
+              showShortcuts={true}
+              value={value}
+              onChange={(newValue) => {
+                const currentDate = new Date();
+                // Get the start of the year
+                const startOfYearDate = format(startOfYear(currentDate), "yyyy-MM-dd");
+                // Get the end of the year
+                const todaysDate = format(currentDate, "yyyy-MM-dd");
+                if (newValue?.startDate !== null) {
+                  newValue.startDate = format(
+                    new Date(newValue.startDate),
+                    "yyyy-MM-dd",
+                  );
+                  newValue.endDate = format(
+                    new Date(newValue.endDate),
+                    "yyyy-MM-dd",
+                  );
+                } else {
+                  newValue.startDate = startOfYearDate;
+                  newValue.endDate = todaysDate;
+                }
+
+                setValue(newValue);
+              }}
+            />
+          </div>
+        </div>
+
         <dl className="mx-auto grid grid-cols-1 gap-px sm:grid-cols-2 lg:grid-cols-4">
           <div className="m-1 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 rounded-lg bg-white px-4 py-7 shadow sm:px-4 xl:px-5">
             <dt className="text-sm/6 font-medium text-gray-500">Customers</dt>

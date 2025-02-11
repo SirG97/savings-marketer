@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { PlusIcon } from "@heroicons/react/24/solid";
+import { format } from "date-fns";
 import { getCustomers, getTransactionByType, getTransactionByTypeAndBranchId } from "../../apis/Customers.js";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,7 +27,7 @@ export default function CommissionList() {
       current_page: 1,
       from: 1,
       last_page: 1,
-      per_page: 10,
+      per_page: 50,
       to: 1,
       total: 0,
     },
@@ -146,12 +147,12 @@ export default function CommissionList() {
                     Payment method
                   </th>
 
-                  {/* <th
+                  <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Status
-                  </th> */}
+                    Date
+                  </th>
 
                   <th
                     scope="col"
@@ -195,7 +196,9 @@ export default function CommissionList() {
                           text={deposit.payment_method}
                         />
                       </td>
-
+                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                        {format(deposit?.created_at, "yyyy-MM-dd")}
+                      </td>
                       <td className="relative whitespace-nowrap py-5 pl-3 pr-2 text-center text-sm font-medium sm:pr-4">
                         <button
                           onClick={() => navigate(`/deposit/${deposit.id}`)}
