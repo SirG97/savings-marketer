@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { PlusIcon } from "@heroicons/react/24/solid";
-import { getTransactionByTypeAndBranchId } from "../../apis/Customers.js";
+import { getTransactionByTypeAndUserId } from "../../apis/Customers.js";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Toaster, toast } from "sonner";
@@ -39,7 +39,7 @@ export default function ExpensesList() {
 
   const fetchDeposits = (page = 1, perPage = 10) => {
     setIsLoading(true);
-    getTransactionByTypeAndBranchId(dispatch, selector.branch_id,"expenses", { page, perPage })
+    getTransactionByTypeAndUserId(dispatch, selector.branch_id,"expenses", { page, perPage })
       .then((resp) => {
         if (resp?.data?.success) {
           console.log(resp?.data?.data?.data);

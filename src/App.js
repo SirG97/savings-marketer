@@ -26,6 +26,9 @@ import Transfer from './pages/transfers/Transfers';
 import Expenses from './pages/expenses/Exepenses';
 import CustomerDeductCommission from './pages/customers/CustomerDeductCommission';
 import ChangePassword from './pages/auth/ChangePassword';
+import CustomerLoanApplication from './pages/customers/CustomerLoanApplication';
+import LoanApplication from './pages/applications/LoanApplication';
+import LoanTransactions from './pages/loan_transactions/LoanTransactions';
 
 const App = () => {
     const dispatch = useDispatch()
@@ -87,15 +90,25 @@ const App = () => {
         <Route exact path="/customer/:id" element={<Customer />} />
         <Route exact path="/customer/:id/edit" element={<CustomerEdit />} />
         <Route exact path="/customer/:id/deposit" element={<CustomerDeposit />} />
+        <Route exact path="/customer/:id/loan/apply" element={<CustomerLoanApplication />} />
+        <Route exact path="/customer/:id/loans" element={<CustomerDeposit />} />
         {/* <Route exact path="/customer/:id/withdraw" element={<CustomerWithdraw />} /> */}
         <Route exact path="/customer/:id/commission" element={<CustomerDeductCommission/>} />
         <Route exact path="/transactions" element={<Transactions />} />
+        <Route exact path="/loan-transactions" element={<LoanTransactions />} />
         <Route exact path="/deposits" element={<Deposit />} />
         {/* <Route exact path="/withdrawals" element={<Withdrawal />} /> */}
         <Route exact path="/commissions" element={<Commission />} />
         {/* <Route exact path="/transfers" element={<Transfer />} /> */}
         {/* <Route exact path="/expenses" element={<Expenses />} /> */}
-        <Route exact path="/loans" element={<Wallets />} />
+        {/* <Route exact path="/loans" element={<Wallets />} /> */}
+        <Route exact path="/loan-applications/pending" element={<LoanApplication />} />
+        <Route exact path="/loan-applications/approved" element={<LoanApplication />} />
+        <Route exact path="/loan-applications/rejected" element={<LoanApplication />} />
+        <Route exact path="/loan-applications/due" element={<LoanApplication />} />
+        <Route exact path="/loan-applications/overdue" element={<LoanApplication />} />
+        <Route exact path="/loan-applications/paid" element={<LoanApplication />} />
+        <Route exact path="/loan-applications" element={<LoanApplication />} />
         <Route exact path='*' element={<NotFoundContainer/>} />
         <Route exact path='auth/*' element={<AuthContainer />} />
       </Routes>

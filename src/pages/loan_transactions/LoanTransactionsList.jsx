@@ -2,22 +2,21 @@ import { useEffect, useState } from "react";
 import { Modal } from "flowbite-react";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { format, startOfYear, endOfYear } from "date-fns";
+import Datepicker from "react-tailwindcss-datepicker";
 import {
   getCustomers,
   getTransactionByType,
   getTransactionByTypeAndUserId,
 } from "../../apis/Customers.js";
-
-import Datepicker from "react-tailwindcss-datepicker";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Toaster, toast } from "sonner";
 import numeral from "numeral";
-import LoadingIcon from "../../components/loaders/LoadingIcon";
-import EmptyState from "../../components/loaders/EmptyState";
+import LoadingIcon from "../../components/loaders/LoadingIcon.jsx";
+import EmptyState from "../../components/loaders/EmptyState.jsx";
 import Pagination from "../../components/pagination/Pagination.jsx";
-import StatusWithDot from "../../components/badges/StatusWithDot";
-import { getModelColor, getPaymentMethod } from "../../utils/helper";
+import StatusWithDot from "../../components/badges/StatusWithDot.jsx";
+import { getModelColor, getPaymentMethod } from "../../utils/helper.js";
 
 numeral.defaultFormat("$0,0.00");
 
@@ -25,7 +24,6 @@ export default function TransactionsList() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentDate = new Date();
-  const [openModal, setOpenModal] = useState(false);
   const startOfYearDate = format(
     startOfYear(currentDate),
     "yyyy-MM-dd 00:00:00",
@@ -35,8 +33,10 @@ export default function TransactionsList() {
     startDate: null ?? startOfYearDate,
     endDate: null ?? endOfYearDate,
   });
+
   const selector = JSON.parse(useSelector((state) => state.auth.userInfo));
   const [details, setDetails] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
   const [deposits, setDeposits] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -46,7 +46,7 @@ export default function TransactionsList() {
       current_page: 1,
       from: 1,
       last_page: 1,
-      per_page: 50,
+      per_page: 10,
       to: 1,
       total: 0,
     },
@@ -54,19 +54,18 @@ export default function TransactionsList() {
 
   // Fetch customers whenever currentPage or per_page changes
   useEffect(() => {
-    fetchCustomers(currentPage, paginationData.meta.per_page);
+    fetchTransactions(currentPage, paginationData.meta.per_page);
   }, [value, currentPage, paginationData.meta.per_page]);
 
-  const fetchCustomers = (page = 1, perPage = 50) => {
+  const fetchTransactions = (page = 1, perPage = 10) => {
     setIsLoading(true);
-    getTransactionByTypeAndUserId(dispatch, selector.id, "deposit", {
+    getTransactionByTypeAndUserId(dispatch, selector.id, "loan", {
       page,
       perPage,
       value,
     })
       .then((resp) => {
         if (resp?.data?.success) {
-          console.log(resp?.data?.data?.data);
           setDeposits(resp?.data?.data?.data);
           setPaginationData({
             links: resp.data?.data?.links,
@@ -145,11 +144,10 @@ export default function TransactionsList() {
       </div>
       <div className="mt-4 rounded-xl bg-white shadow-sm">
         <Toaster position="top-right" richColors />
-
         <div className="flex justify-between px-4 py-2 sm:items-center sm:px-6 lg:px-4">
           <div className="sm:flex-auto">
             <h1 className="mt-4 text-base font-semibold text-gray-900">
-              Deposits
+              Loan Transaction History
             </h1>
           </div>
           <div className="mt-4 sm:ml-16 sm:flex-none">
@@ -169,12 +167,12 @@ export default function TransactionsList() {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="mr-3 bg-gray-100">
                   <tr className="">
-                    <th
-                      scope="col"
-                      className="py-3.5 pl-2 pr-1 text-left text-sm font-semibold text-gray-900 sm:pl-4"
-                    >
-                      Reference
-                    </th>
+                    {/* <th
+                    scope="col"
+                    className="py-3.5 pl-2 pr-1 text-left text-sm font-semibold text-gray-900 sm:pl-4"
+                  >
+                    Reference
+                  </th> */}
 
                     <th
                       scope="col"
@@ -186,19 +184,19 @@ export default function TransactionsList() {
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
-                      Deposited for
+                      Customer
                     </th>
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
-                      Deposited by
+                      Processed by
                     </th>
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
-                      Branch
+                      Type
                     </th>
                     <th
                       scope="col"
@@ -234,9 +232,9 @@ export default function TransactionsList() {
                   <tbody className="divide-y divide-gray-200 bg-white pb-3">
                     {deposits.map((deposit) => (
                       <tr key={deposit.id}>
-                        <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                          {deposit?.reference}
-                        </td>
+                        {/* <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                        {deposit?.reference}
+                      </td> */}
 
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                           ₦{numeral(deposit?.amount).format("0,0.00")}
@@ -249,7 +247,10 @@ export default function TransactionsList() {
                           {deposit?.user?.name ? deposit?.user?.name : "-"}
                         </td>
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                          {deposit?.branch?.name ? deposit?.branch?.name : "-"}
+                          <StatusWithDot
+                            status={getModelColor(deposit.transaction_type)}
+                            text={deposit.transaction_type}
+                          />
                         </td>
                         <td className="whitespace-nowrap px-3 py-5 text-center text-sm text-gray-500">
                           <StatusWithDot
@@ -307,7 +308,7 @@ export default function TransactionsList() {
               <div>
                 <div className="px-4 sm:px-0">
                   <h3 className="text-center text-base/7 font-semibold text-gray-900">
-                    Details
+                    Loan Transaction Details
                   </h3>
                 </div>
                 <div className="mt-6 border-t border-gray-100">
@@ -338,7 +339,6 @@ export default function TransactionsList() {
                       </dd>
                     </div>
 
-
                     <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                       <dt className="text-sm/6 font-medium text-gray-900">
                         Payment method
@@ -367,7 +367,6 @@ export default function TransactionsList() {
                         {details?.description}
                       </dd>
                     </div>
-
 
                     {details?.created_at && (
                       <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

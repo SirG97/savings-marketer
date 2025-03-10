@@ -5,7 +5,7 @@ import { format, startOfYear, endOfYear } from "date-fns";
 import {
   getCustomers,
   getTransactionByType,
-  getTransactionByTypeAndUserId,
+  getTransactionByTypeAndCustomerId,
 } from "../../apis/Customers.js";
 
 import Datepicker from "react-tailwindcss-datepicker";
@@ -13,19 +13,18 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Toaster, toast } from "sonner";
 import numeral from "numeral";
-import LoadingIcon from "../../components/loaders/LoadingIcon";
-import EmptyState from "../../components/loaders/EmptyState";
+import LoadingIcon from "../../components/loaders/LoadingIcon.jsx";
+import EmptyState from "../../components/loaders/EmptyState.jsx";
 import Pagination from "../../components/pagination/Pagination.jsx";
-import StatusWithDot from "../../components/badges/StatusWithDot";
-import { getModelColor, getPaymentMethod } from "../../utils/helper";
+import StatusWithDot from "../../components/badges/StatusWithDot.jsx";
+import { getPaymentMethod } from "../../utils/helper.js";
 
 numeral.defaultFormat("$0,0.00");
 
-export default function TransactionsList() {
+export default function CustomerWithdrawalList({customer}) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentDate = new Date();
-  const [openModal, setOpenModal] = useState(false);
   const startOfYearDate = format(
     startOfYear(currentDate),
     "yyyy-MM-dd 00:00:00",
@@ -37,6 +36,7 @@ export default function TransactionsList() {
   });
   const selector = JSON.parse(useSelector((state) => state.auth.userInfo));
   const [details, setDetails] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
   const [deposits, setDeposits] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -46,7 +46,7 @@ export default function TransactionsList() {
       current_page: 1,
       from: 1,
       last_page: 1,
-      per_page: 50,
+      per_page: 10,
       to: 1,
       total: 0,
     },
@@ -55,11 +55,11 @@ export default function TransactionsList() {
   // Fetch customers whenever currentPage or per_page changes
   useEffect(() => {
     fetchCustomers(currentPage, paginationData.meta.per_page);
-  }, [value, currentPage, paginationData.meta.per_page]);
+  }, [value, customer, currentPage, paginationData.meta.per_page]);
 
-  const fetchCustomers = (page = 1, perPage = 50) => {
+  const fetchCustomers = (page = 1, perPage = 10) => {
     setIsLoading(true);
-    getTransactionByTypeAndUserId(dispatch, selector.id, "deposit", {
+    getTransactionByTypeAndCustomerId(dispatch, customer.id, "withdrawal", {
       page,
       perPage,
       value,
@@ -108,41 +108,6 @@ export default function TransactionsList() {
 
   return (
     <>
-      <div className="z-10 mx-1 flex filter">
-        <div className="mb-2 w-64">
-          Filter
-          <Datepicker
-            showShortcuts={true}
-            value={value}
-            onChange={(newValue) => {
-              const currentDate = new Date();
-              // Get the start of the year with time set to 00:00:00
-              const startOfYearDate = format(
-                startOfYear(currentDate),
-                "yyyy-MM-dd 00:00:00",
-              );
-              // Get the end of the year with time set to 23:59:59
-              const todaysDate = format(currentDate, "yyyy-MM-dd 23:59:59");
-
-              if (newValue?.startDate !== null) {
-                newValue.startDate = format(
-                  new Date(newValue.startDate),
-                  "yyyy-MM-dd 00:00:00",
-                );
-                newValue.endDate = format(
-                  new Date(newValue.endDate),
-                  "yyyy-MM-dd 23:59:59",
-                );
-              } else {
-                newValue.startDate = startOfYearDate;
-                newValue.endDate = todaysDate;
-              }
-
-              setValue(newValue);
-            }}
-          />
-        </div>
-      </div>
       <div className="mt-4 rounded-xl bg-white shadow-sm">
         <Toaster position="top-right" richColors />
 
@@ -152,15 +117,45 @@ export default function TransactionsList() {
               Deposits
             </h1>
           </div>
-          <div className="mt-4 sm:ml-16 sm:flex-none">
-            {/* <button
-            type="button"
-            onClick={() => navigate("/customers/new")}
-            className="ml-3 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            <PlusIcon aria-hidden="true" className="-ml-0.5 size-5" />
-            Add Customer
-          </button> */}
+          <div className=" sm:ml-16 sm:flex-none">
+            <div className="z-10 mx-1 flex  filter">
+              <div className="mt-3 w-64">
+               
+                <Datepicker
+                  showShortcuts={true}
+                  value={value}
+                  onChange={(newValue) => {
+                    const currentDate = new Date();
+                    // Get the start of the year with time set to 00:00:00
+                    const startOfYearDate = format(
+                      startOfYear(currentDate),
+                      "yyyy-MM-dd 00:00:00",
+                    );
+                    // Get the end of the year with time set to 23:59:59
+                    const todaysDate = format(
+                      currentDate,
+                      "yyyy-MM-dd 23:59:59",
+                    );
+
+                    if (newValue?.startDate !== null) {
+                      newValue.startDate = format(
+                        new Date(newValue.startDate),
+                        "yyyy-MM-dd 00:00:00",
+                      );
+                      newValue.endDate = format(
+                        new Date(newValue.endDate),
+                        "yyyy-MM-dd 23:59:59",
+                      );
+                    } else {
+                      newValue.startDate = startOfYearDate;
+                      newValue.endDate = todaysDate;
+                    }
+
+                    setValue(newValue);
+                  }}
+                />
+              </div>
+            </div>
           </div>
         </div>
         <div className="mt-6 flow-root">
@@ -182,17 +177,12 @@ export default function TransactionsList() {
                     >
                       Amount
                     </th>
+                 
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
-                      Deposited for
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                    >
-                      Deposited by
+                      Processed by
                     </th>
                     <th
                       scope="col"
@@ -241,10 +231,7 @@ export default function TransactionsList() {
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                           ₦{numeral(deposit?.amount).format("0,0.00")}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                          {deposit?.customer?.surname}{" "}
-                          {deposit?.customer?.first_name}
-                        </td>
+                      
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                           {deposit?.user?.name ? deposit?.user?.name : "-"}
                         </td>
@@ -282,7 +269,7 @@ export default function TransactionsList() {
                     <tr>
                       <td colSpan="7">
                         <EmptyState
-                          text={"No customers yet. Create new customer"}
+                          text={"No withdrawals yet"}
                         />
                       </td>
                     </tr>
@@ -296,7 +283,7 @@ export default function TransactionsList() {
             onPageChange={handlePageChange}
             onPageSizeChange={handlePageSizeChange}
           />
-          <Modal
+            <Modal
             show={openModal}
             size="lg"
             popup
@@ -307,7 +294,7 @@ export default function TransactionsList() {
               <div>
                 <div className="px-4 sm:px-0">
                   <h3 className="text-center text-base/7 font-semibold text-gray-900">
-                    Details
+                    Withdrawal Details
                   </h3>
                 </div>
                 <div className="mt-6 border-t border-gray-100">
@@ -352,7 +339,7 @@ export default function TransactionsList() {
                     </div>
                     <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                       <dt className="text-sm/6 font-medium text-gray-900">
-                        Deposited by
+                        Withdrawal by
                       </dt>
                       <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
                         {details?.user?.name}
@@ -409,3 +396,4 @@ export default function TransactionsList() {
     </>
   );
 }
+

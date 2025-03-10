@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import { PlusIcon } from "@heroicons/react/24/solid";
-import { getCustomers, getTransactionByType, getTransactionByTypeAndUserId } from "../../apis/Customers.js";
+import { format } from "date-fns";
+import {
+  getCustomers,
+  getTransactionByType,
+  getTransactionByTypeAndBranchId,
+} from "../../apis/Customers.js";
+
+import { getLoanApplications } from "../../apis/Loan.js";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Toaster, toast } from "sonner";
@@ -13,10 +20,11 @@ import { getPaymentMethod } from "../../utils/helper.js";
 
 numeral.defaultFormat("$0,0.00");
 
-export default function CommissionList() {
+export default function LoanList() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const selector = JSON.parse(useSelector((state) => state.auth.userInfo))
+  const selector = JSON.parse(useSelector((state) => state.auth.userInfo));
+  const [loanApplications, setLoanApplications] = useState([]);
   const [deposits, setDeposits] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,12 +42,15 @@ export default function CommissionList() {
 
   // Fetch customers whenever currentPage or per_page changes
   useEffect(() => {
-    fetchDeposits(currentPage, paginationData.meta.per_page);
+    fetchCustomers(currentPage, paginationData.meta.per_page);
   }, [currentPage, paginationData.meta.per_page]);
 
-  const fetchDeposits = (page = 1, perPage = 10) => {
+  const fetchCustomers = (page = 1, perPage = 10) => {
     setIsLoading(true);
-    getTransactionByTypeAndUserId(dispatch, selector.branch_id, "commission", { page, perPage })
+    getTransactionByTypeAndBranchId(dispatch, selector.branch_id, "deposit", {
+      page,
+      perPage,
+    })
       .then((resp) => {
         if (resp?.data?.success) {
           console.log(resp?.data?.data?.data);
@@ -88,7 +99,7 @@ export default function CommissionList() {
       <div className="flex justify-between px-4 py-2 sm:items-center sm:px-6 lg:px-4">
         <div className="sm:flex-auto">
           <h1 className="mt-4 text-base font-semibold text-gray-900">
-            Commission History
+            Deposits
           </h1>
         </div>
         <div className="mt-4 sm:ml-16 sm:flex-none">
@@ -125,13 +136,13 @@ export default function CommissionList() {
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Deducted from
+                    Deposited for
                   </th>
                   <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Deducted by
+                    Deposited by
                   </th>
                   <th
                     scope="col"
@@ -146,12 +157,12 @@ export default function CommissionList() {
                     Payment method
                   </th>
 
-                  {/* <th
+                  <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Status
-                  </th> */}
+                    Date
+                  </th>
 
                   <th
                     scope="col"
@@ -190,13 +201,15 @@ export default function CommissionList() {
                       <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                         {deposit?.branch?.name ? deposit?.branch?.name : "-"}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                      <td className="whitespace-nowrap px-3 py-5 text-center text-sm text-gray-500">
                         <StatusWithDot
                           status={getPaymentMethod(deposit.payment_method)}
                           text={deposit.payment_method}
                         />
                       </td>
-
+                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                        {format(deposit?.created_at, "yyyy-MM-dd hh:mm a")}
+                      </td>
                       <td className="relative whitespace-nowrap py-5 pl-3 pr-2 text-center text-sm font-medium sm:pr-4">
                         <button
                           onClick={() => navigate(`/deposit/${deposit.id}`)}
@@ -214,7 +227,7 @@ export default function CommissionList() {
                   <tr>
                     <td colSpan="7">
                       <EmptyState
-                        text={"No commission earned yet"}
+                        text={"No customers yet. Create new customer"}
                       />
                     </td>
                   </tr>
