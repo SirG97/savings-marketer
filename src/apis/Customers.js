@@ -138,7 +138,7 @@ export const getTransactionByType = async (dispatch, type, params) => {
   }
 };
 
-export const getTransactionByTypeAndBranchId = async (
+export const getTransactionByTypeAndUserId = async (
   dispatch,
   branchId,
   type,
@@ -148,7 +148,7 @@ export const getTransactionByTypeAndBranchId = async (
   try {
     const resp = await axios.get(
       process.env.REACT_APP_BASE_URL +
-        `/user/transaction/branch_read/${type}/${branchId}`,
+        `/user/transaction/user_read/${type}/${branchId}`,
       {
         headers: {
           accept: "application/json",
@@ -158,6 +158,74 @@ export const getTransactionByTypeAndBranchId = async (
         params: {
           page: params?.page,
           size: params?.perPage,
+          startDate: params?.value?.startDate,
+          endDate: params?.value?.endDate,
+        },
+      },
+    );
+    dispatch(actionSuccess());
+    return resp;
+  } catch (err) {
+    dispatch(actionFailed());
+    return err;
+  }
+};
+
+export const getCustomerTransactionByTypeAndUserId = async (
+  dispatch,
+  branchId,
+  type,
+  params,
+) => {
+  dispatch(actionStart());
+  try {
+    const resp = await axios.get(
+      process.env.REACT_APP_BASE_URL +
+        `/user/customer_transaction/user_read/${type}/${branchId}`,
+      {
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        params: {
+          page: params?.page,
+          size: params?.perPage,
+          startDate: params?.value?.startDate,
+          endDate: params?.value?.endDate,
+        },
+      },
+    );
+    dispatch(actionSuccess());
+    return resp;
+  } catch (err) {
+    dispatch(actionFailed());
+    return err;
+  }
+};
+
+export const getTransactionByTypeAndCustomerId = async (
+  dispatch,
+  customerId,
+  type,
+  params,
+) => {
+  dispatch(actionStart());
+  try {
+    const resp = await axios.get(
+      process.env.REACT_APP_BASE_URL +
+        `/user/customer_transaction/customer_read/${type}/${customerId}`,
+      {
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        params: {
+          page: params?.page,
+          size: params?.perPage,
+          startDate: params?.value?.startDate,
+          endDate: params?.value?.endDate,
         },
       },
     );

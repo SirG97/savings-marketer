@@ -14,7 +14,16 @@ export const getModelColor = (modelString) => {
       "App\\Models\\SuperAdmin": "error",
       "App\\Models\\Admin": "warning",
       "App\\Models\\Auditor": "unknown",
-      "App\\Models\\Marketer": "primary"
+      "App\\Models\\Marketer": "primary",
+      "paid": "success",
+      "pending": "unknown",
+      "due": "warning",
+      "approved": "primary",
+      "rejected": "error",
+      "overdue": "error",
+      "loan_debit": "error",
+      "loan_credit": "success"
+      
     };
   
     return modelMap[modelString] || "unknown";
@@ -24,6 +33,7 @@ export const getPaymentMethod = (modelString) => {
   const modelMap = {
     "cash": "error",
     "bank": "primary"
+
   };
 
   return modelMap[modelString] || "unknown";

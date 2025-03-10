@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import {
   getCustomers,
-  getTransactionByTypeAndBranchId,
+  getTransactionByTypeAndUserId,
 } from "../../apis/Customers.js";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -41,7 +41,7 @@ export default function BranchDeposits({ branchId }) {
 
   const fetchDeposits = (page = 1, perPage = 10) => {
     setIsLoading(true);
-    getTransactionByTypeAndBranchId(dispatch, branchId, "deposit", {
+    getTransactionByTypeAndUserId(dispatch, branchId, "deposit", {
       page,
       perPage,
     })

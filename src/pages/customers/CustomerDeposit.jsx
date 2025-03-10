@@ -63,7 +63,7 @@ export default function CustomerDeposit() {
           console.log(customerData);
           setCustomer(customerData);
           // Prepopulate form fields
-         
+
           setIsLoading(false);
         } else {
           toast.error("An error occurred. Try again!");
@@ -73,7 +73,6 @@ export default function CustomerDeposit() {
         setIsLoading(false);
         toast.error("An error occurred. Try again!");
       });
-    
   };
 
   const handleCustomerDeposit = (data) => {
@@ -89,7 +88,7 @@ export default function CustomerDeposit() {
           date: "",
         });
         fetchCustomer(id);
-        toast.success('Deposit successful');
+        toast.success("Deposit successful");
       } else {
         toast.error(resp.response.data.message);
       }
@@ -128,6 +127,22 @@ export default function CustomerDeposit() {
                       "0,0.00",
                     )}
                   </p>
+                  {customer?.customer_wallet?.loan > 0 && (
+                    <>
+                      <p className="text-md">
+                        Outstanding loan: 
+                        <span className="text-red-600">
+                          {" "}₦{numeral(customer?.customer_wallet?.loan).format(
+                            "0,0.00",
+                          )}
+                        </span>
+                      </p>
+                      <p className="text-sm text-red-600">
+                        Please note that any outstanding loan will be paid off
+                        before the customer balance is updated
+                      </p>
+                    </>
+                  )}
                 </div>
                 <div className="sm:col-span-6">
                   <TextInput
@@ -177,7 +192,6 @@ export default function CustomerDeposit() {
             </div>
             <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
               <Button
-                
                 loading={isLoading}
                 className="flex rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >

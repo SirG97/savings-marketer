@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -11,6 +11,9 @@ import {
   MenuItem,
   MenuItems,
   TransitionChild,
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
 } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -28,6 +31,7 @@ import {
   CreditCardIcon,
   TrophyIcon,
   TicketIcon,
+  ChevronRightIcon,
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { Toaster } from "sonner";
@@ -45,10 +49,10 @@ function classNames(...classes) {
 
 export default function AppLayout({ children }) {
   const location = useLocation();
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const selector = JSON.parse(useSelector((state) => state.auth.userInfo))
+  const selector = JSON.parse(useSelector((state) => state.auth.userInfo));
   const [user, setUser] = useState([]);
   const [navigation, setNavigation] = useState([
     {
@@ -78,27 +82,42 @@ export default function AppLayout({ children }) {
     {
       name: "Deposits",
       href: "/transactions",
-      icon: BanknotesIcon,
+      icon: CreditCardIcon,
       current: false,
     },
     // {
-    //   name: "Withdrawals",
-    //   href: "/withdrawals",
+    //   name: "Loan",
+    //   href: "/loan",
     //   icon: CreditCardIcon,
     //   current: false,
     // },
-    // {
-    //   name: "Transfers",
-    //   href: "/transfers",
-    //   icon: ScaleIcon,
-    //   current: false,
-    // },
     {
-      name: "Commissions",
-      href: "/commissions",
-      icon: TrophyIcon,
+      name: "Loan Applications",
+      href: "#",
+      icon: BanknotesIcon,
+      current: false,
+      children: [
+        { name: "All", href: "/loan-applications" },
+        { name: "Pending", href: "/loan-applications/pending" },
+        { name: "Approved", href: "/loan-applications/approved" },
+        { name: "Due", href: "/loan-applications/due" },
+        { name: "Overdue", href: "/loan-applications/overdue" },
+        { name: "Completed", href: "/loan-applications/paid" },
+      ],
+    },
+
+    {
+      name: "Loan Transactions",
+      href: "/loan-transactions",
+      icon: ScaleIcon,
       current: false,
     },
+    // {
+    //   name: "Commissions",
+    //   href: "/commissions",
+    //   icon: TrophyIcon,
+    //   current: false,
+    // },
     // {
     //   name: "Expenses",
     //   href: "/expenses",
@@ -109,10 +128,33 @@ export default function AppLayout({ children }) {
 
   useEffect(() => {
     const updateNavigation = () => {
-      const newNavigation = navigation.map((item) => ({
-        ...item,
-        current: item.href === location.pathname,
-      }));
+      const newNavigation = navigation.map((item) => {
+        if (item.children) {
+          // Update children's current status
+          const updatedChildren = item.children.map((child) => ({
+            ...child,
+            current: child.href === location.pathname,
+          }));
+
+          // Set parent's current status based on if any child is current
+          const isAnyChildCurrent = updatedChildren.some(
+            (child) => child.current,
+          );
+
+          return {
+            ...item,
+            children: updatedChildren,
+            current: isAnyChildCurrent,
+          };
+        }
+
+        // For items without children, update as before
+        return {
+          ...item,
+          current: item.href === location.pathname,
+        };
+      });
+
       setNavigation(newNavigation);
     };
 
@@ -129,10 +171,7 @@ export default function AppLayout({ children }) {
     navigate("/auth/login");
   }
 
-  
-console.log(selector)
-
-
+  // console.log(selector);
 
   return (
     <>
@@ -178,47 +217,85 @@ console.log(selector)
                   />
                 </div>
                 <nav className="flex flex-1 flex-col">
-                  <ul className="flex flex-1 flex-col gap-y-7">
+                  <ul role="list" className="flex flex-1 flex-col gap-y-7">
                     <li>
-                      <ul className="-mx-2 space-y-1">
+                      <ul role="list" className="-mx-2 space-y-1">
                         {navigation.map((item) => (
                           <li key={item.name}>
-                            <a
-                              href={item.href}
-                              className={classNames(
-                                item.current
-                                  ? "bg-indigo-700 text-white"
-                                  : "text-indigo-200 hover:bg-indigo-700 hover:text-white",
-                                "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
-                              )}
-                            >
-                              <item.icon
-                                aria-hidden="true"
+                            {!item.children ? (
+                              <Link
+                                to={item.href}
                                 className={classNames(
                                   item.current
-                                    ? "text-white"
-                                    : "text-indigo-200 group-hover:text-white",
-                                  "size-6 shrink-0",
+                                    ? "bg-gray-50"
+                                    : "hover:bg-gray-50",
+                                  "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700",
                                 )}
-                              />
-                              {item.name}
-                            </a>
+                              >
+                                <item.icon
+                                  aria-hidden="true"
+                                  className="size-6 shrink-0 text-gray-400"
+                                />
+                                {item.name}
+                              </Link>
+                            ) : (
+                              <Disclosure as="div">
+                                <DisclosureButton
+                                  className={classNames(
+                                    item.current
+                                      ? "bg-gray-50"
+                                      : "hover:bg-gray-50",
+                                    "group flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm/6 font-semibold text-gray-700",
+                                  )}
+                                >
+                                  <item.icon
+                                    aria-hidden="true"
+                                    className="size-6 shrink-0 text-gray-400"
+                                  />
+                                  {item.name}
+                                  <ChevronRightIcon
+                                    aria-hidden="true"
+                                    className="ml-auto size-5 shrink-0 text-gray-400 group-data-[open]:rotate-90 group-data-[open]:text-gray-500"
+                                  />
+                                </DisclosureButton>
+                                <DisclosurePanel as="ul" className="mt-1 px-2">
+                                  {item.children.map((subItem) => (
+                                    <li key={subItem.name}>
+                                      {/* 44px */}
+                                      <DisclosureButton
+                                        as="a"
+                                        href={subItem.href}
+                                        className={classNames(
+                                          subItem.current
+                                            ? "bg-gray-50"
+                                            : "hover:bg-gray-50",
+                                          "block rounded-md py-2 pl-9 pr-2 text-sm/6 text-gray-700",
+                                        )}
+                                      >
+                                        {subItem.name}
+                                      </DisclosureButton>
+                                    </li>
+                                  ))}
+                                </DisclosurePanel>
+                              </Disclosure>
+                            )}
                           </li>
                         ))}
                       </ul>
                     </li>
-
-                    <li className="mt-auto">
-                      <button
-                        onClick={handleLogout}
-                        className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-indigo-200 hover:bg-indigo-700 hover:text-white"
+                    <li className="-mx-6 mt-auto">
+                      <a
+                        href="#"
+                        className="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-50"
                       >
-                        <Cog6ToothIcon
-                          aria-hidden="true"
-                          className="size-6 shrink-0 text-indigo-200 group-hover:text-white"
+                        <img
+                          alt=""
+                          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                          className="size-8 rounded-full bg-gray-50"
                         />
-                        Sign out
-                      </button>
+                        <span className="sr-only">Your profile</span>
+                        <span aria-hidden="true">Tom Cook</span>
+                      </a>
                     </li>
                   </ul>
                 </nav>
@@ -244,42 +321,77 @@ console.log(selector)
                   <ul role="list" className="-mx-2 space-y-1">
                     {navigation.map((item) => (
                       <li key={item.name}>
-                        <a
-                          href={item.href}
-                          className={classNames(
-                            item.current
-                              ? "bg-indigo-700 text-white"
-                              : "text-indigo-200 hover:bg-indigo-700 hover:text-white",
-                            "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
-                          )}
-                        >
-                          <item.icon
-                            aria-hidden="true"
+                        {!item.children ? (
+                          <Link
+                            to={item.href}
                             className={classNames(
                               item.current
-                                ? "text-white"
-                                : "text-indigo-200 group-hover:text-white",
-                              "size-6 shrink-0",
+                                ? "bg-indigo-700 text-white"
+                                : "text-indigo-200 hover:bg-indigo-700 hover:text-white",
+                              "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
                             )}
-                          />
-                          {item.name}
-                        </a>
+                          >
+                            <item.icon
+                              aria-hidden="true"
+                              className="size-6 shrink-0 text-gray-400"
+                            />
+                            {item.name}
+                          </Link>
+                        ) : (
+                          <Disclosure as="div">
+                            <DisclosureButton
+                              className={classNames(
+                                item.current
+                                  ? "bg-indigo-700 text-white"
+                                  : "text-indigo-200 hover:bg-indigo-700 hover:text-white",
+                                "group flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm/6 font-semibold text-gray-700",
+                              )}
+                            >
+                              <item.icon
+                                aria-hidden="true"
+                                className="size-6 shrink-0 text-gray-400"
+                              />
+                              {item.name}
+                              <ChevronRightIcon
+                                aria-hidden="true"
+                                className="ml-auto size-5 shrink-0 text-gray-400 group-data-[open]:rotate-90 group-data-[open]:text-gray-500"
+                              />
+                            </DisclosureButton>
+                            <DisclosurePanel as="ul" className="mt-1 px-2">
+                              {item.children.map((subItem) => (
+                                <li key={subItem.name}>
+                                  {/* 44px */}
+                                  <Link
+                                    
+                                    to={subItem.href}
+                                    className={classNames(
+                                      subItem.current
+                                        ? "text-indigo-700"
+                                        : "text-indigo-200 hover:text-indigo-700",
+                                      "block rounded-md py-2 pl-9 pr-2 text-sm/6 text-gray-700",
+                                    )}
+                                  >
+                                    {subItem.name}
+                                  </Link>
+                                </li>
+                              ))}
+                            </DisclosurePanel>
+                          </Disclosure>
+                        )}
                       </li>
                     ))}
                   </ul>
                 </li>
-
                 <li className="mt-auto">
                   <button
-                    
                     onClick={handleLogout}
-                    className="group w-full -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-indigo-200 hover:bg-indigo-700 hover:text-white"
+                    className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-indigo-200 hover:text-indigo-700"
                   >
-                    <ArrowRightStartOnRectangleIcon
+                    <Cog6ToothIcon
                       aria-hidden="true"
                       className="size-6 shrink-0 text-indigo-200 group-hover:text-white"
                     />
-                    Logout
+                    Sign out
                   </button>
                 </li>
               </ul>
@@ -334,7 +446,7 @@ console.log(selector)
                         aria-hidden="true"
                         className="ml-4 text-sm/6 font-semibold text-gray-900"
                       >
-                       {selector?.name}
+                        {selector?.name}
                       </span>
                       <ChevronDownIcon
                         aria-hidden="true"

@@ -12,11 +12,8 @@ export default function Dashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentDate = new Date();
-  // Get the start of the year
   const startOfYearDate = format(startOfYear(currentDate), "yyyy-MM-dd");
-  // Get the end of the year
   const endOfYearDate = format(endOfYear(currentDate), "yyyy-MM-dd");
-
   const selector = JSON.parse(useSelector((state) => state.auth.userInfo));
   const [value, setValue] = useState({
     startDate: null ?? startOfYearDate,
@@ -30,7 +27,7 @@ export default function Dashboard() {
         if (resp?.data?.success) {
           setDashboardData(resp?.data?.data);
         } else {
-          toast.error("An error occurred. Try again!");
+          // toast.error("An error occurred. Try again!");
         }
       })
       .catch((error) => {
