@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import logo from "../../assets/logos/profile.png"
 import {
   Dialog,
   DialogBackdrop,
@@ -212,7 +213,7 @@ export default function AppLayout({ children }) {
                 <div className="flex h-16 shrink-0 items-center">
                   <img
                     alt="Your Company"
-                    src="https://tailwindui.com/plus/img/logos/mark.svg?color=white"
+                    src={logo}
                     className="h-8 w-auto"
                   />
                 </div>
@@ -311,10 +312,12 @@ export default function AppLayout({ children }) {
             <div className="flex h-16 shrink-0 items-center">
               <img
                 alt="Your Company"
-                src="https://tailwindui.com/plus/img/logos/mark.svg?color=white"
+                src={logo}
                 className="h-8 w-auto"
               />
+              <p className="text-white text-xs">Marketer</p>
             </div>
+            
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
