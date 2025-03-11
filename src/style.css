@@ -1572,6 +1572,10 @@ input[type="range"]::-ms-fill-lower {
   height: 5rem;
 }
 
+.h-24 {
+  height: 6rem;
+}
+
 .h-3 {
   height: 0.75rem;
 }
@@ -1630,6 +1634,10 @@ input[type="range"]::-ms-fill-lower {
 
 .h-screen {
   height: 100vh;
+}
+
+.h-32 {
+  height: 8rem;
 }
 
 .max-h-\[90dvh\] {
@@ -3177,11 +3185,6 @@ input[type="range"]::-ms-fill-lower {
   background-color: rgb(159 88 10 / var(--tw-bg-opacity));
 }
 
-.bg-indigo-300 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(180 198 252 / var(--tw-bg-opacity));
-}
-
 .bg-opacity-50 {
   --tw-bg-opacity: 0.5;
 }
@@ -3768,6 +3771,11 @@ input[type="range"]::-ms-fill-lower {
   line-height: 1.5rem;
 }
 
+.text-base\/3 {
+  font-size: 1rem;
+  line-height: .75rem;
+}
+
 .text-base\/7 {
   font-size: 1rem;
   line-height: 1.75rem;
@@ -3811,11 +3819,6 @@ input[type="range"]::-ms-fill-lower {
 .text-xs\/5 {
   font-size: 0.75rem;
   line-height: 1.25rem;
-}
-
-.text-base\/3 {
-  font-size: 1rem;
-  line-height: .75rem;
 }
 
 .font-bold {
@@ -4818,6 +4821,11 @@ input[type="range"]::-ms-fill-lower {
   background-color: rgb(205 219 254 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-indigo-50:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(240 245 255 / var(--tw-bg-opacity));
+}
+
 .hover\:bg-indigo-500:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(104 117 245 / var(--tw-bg-opacity));
@@ -4921,11 +4929,6 @@ input[type="range"]::-ms-fill-lower {
 .hover\:bg-yellow-600:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(159 88 10 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-indigo-50:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(240 245 255 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-gradient-to-br:hover {
@@ -7733,6 +7736,10 @@ input[type="range"]::-ms-fill-lower {
     flex: none;
   }
 
+  .sm\:grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
   .sm\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -7747,10 +7754,6 @@ input[type="range"]::-ms-fill-lower {
 
   .sm\:grid-cols-6 {
     grid-template-columns: repeat(6, minmax(0, 1fr));
-  }
-
-  .sm\:grid-cols-1 {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 
   .sm\:items-center {
@@ -7974,12 +7977,12 @@ input[type="range"]::-ms-fill-lower {
     max-width: 36rem;
   }
 
-  .md\:grid-cols-3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
   .md\:grid-cols-12 {
     grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .md\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .md\:flex-row {
