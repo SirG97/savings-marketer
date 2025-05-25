@@ -6,6 +6,7 @@ import {
   getCustomers,
   getTransactionByType,
   getTransactionByTypeAndUserId,
+  reverseCustomerTransaction,
 } from "../../apis/Customers.js";
 
 import Datepicker from "react-tailwindcss-datepicker";
@@ -18,6 +19,7 @@ import EmptyState from "../../components/loaders/EmptyState";
 import Pagination from "../../components/pagination/Pagination.jsx";
 import StatusWithDot from "../../components/badges/StatusWithDot";
 import { getModelColor, getPaymentMethod } from "../../utils/helper";
+import Button from "../../components/buttons/Button.jsx";
 
 numeral.defaultFormat("$0,0.00");
 
@@ -26,6 +28,8 @@ export default function TransactionsList() {
   const navigate = useNavigate();
   const currentDate = new Date();
   const [openModal, setOpenModal] = useState(false);
+  const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
+  const [isReversing, setIsReversing] = useState(false);
   const startOfYearDate = format(
     startOfYear(currentDate),
     "yyyy-MM-dd 00:00:00",
@@ -88,6 +92,28 @@ export default function TransactionsList() {
       .catch(() => {
         setIsLoading(false);
         toast.error("An error occurred. Try again!");
+      });
+  };
+
+  const handleReverseTransaction = () => {
+    setIsReversing(true);
+    reverseCustomerTransaction(dispatch, details.id)
+      .then((resp) => {
+        if (resp?.data?.success) {
+          toast.success("Transaction reversed successfully");
+          // Refresh the transactions list
+          fetchCustomers(currentPage, paginationData.meta.per_page);
+        } else {
+          toast.error(resp?.data?.message || "Failed to reverse transaction");
+        }
+      })
+      .catch((error) => {
+        toast.error(error.response?.data?.message || "An error occurred");
+      })
+      .finally(() => {
+        setIsReversing(false);
+        setOpenConfirmationModal(false);
+        setOpenModal(false);
       });
   };
 
@@ -338,7 +364,6 @@ export default function TransactionsList() {
                       </dd>
                     </div>
 
-
                     <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                       <dt className="text-sm/6 font-medium text-gray-900">
                         Payment method
@@ -367,7 +392,6 @@ export default function TransactionsList() {
                         {details?.description}
                       </dd>
                     </div>
-
 
                     {details?.created_at && (
                       <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -400,6 +424,59 @@ export default function TransactionsList() {
                       </div>
                     )}
                   </dl>
+                </div>
+                <div className="mt-6 flex justify-end space-x-4">
+                  {(!details.reversed_by && new Date(details.created_at) > new Date('2025-05-24')) && (
+                    <Button
+                      className="ml-3 inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                      loading={isLoading}
+                      onClick={() => {
+                        setOpenConfirmationModal(true);
+                        setOpenModal(false);
+                      }}
+                    >
+                      Reverse Transaction
+                    </Button>
+                  )}
+                  <Button
+                    className="ml-3 inline-flex items-center rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+                    color="gray"
+                    onClick={() => setOpenModal(false)}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
+            </Modal.Body>
+          </Modal>
+          {/* Confirmation Modal */}
+          <Modal
+            show={openConfirmationModal}
+            size="md"
+            popup
+            onClose={() => setOpenConfirmationModal(false)}
+          >
+            <Modal.Header />
+            <Modal.Body>
+              <div className="text-center">
+                <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                  Are you sure you want to reverse this transaction?
+                </h3>
+                <div className="flex justify-center gap-4">
+                  <Button
+                    className="ml-3 inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                    isProcessing={isReversing}
+                    onClick={handleReverseTransaction}
+                  >
+                    Yes, I'm sure
+                  </Button>
+                  <Button
+                    className="ml-3 inline-flex items-center rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+                    onClick={() => setOpenConfirmationModal(false)}
+                    disabled={isReversing}
+                  >
+                    No, cancel
+                  </Button>
                 </div>
               </div>
             </Modal.Body>

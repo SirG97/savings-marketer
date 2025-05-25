@@ -171,6 +171,18 @@ export const getTransactionByTypeAndUserId = async (
   }
 };
 
+export const reverseCustomerTransaction = (dispatch, transactionId) => {
+  return axios.post(
+    process.env.REACT_APP_BASE_URL +`/user/customer_transaction/reverse/${transactionId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    }
+  );
+};
+
 export const getCustomerTransactionByTypeAndUserId = async (
   dispatch,
   branchId,
