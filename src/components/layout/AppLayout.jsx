@@ -92,27 +92,27 @@ export default function AppLayout({ children }) {
     //   icon: CreditCardIcon,
     //   current: false,
     // },
-    {
-      name: "Loan Applications",
-      href: "#",
-      icon: BanknotesIcon,
-      current: false,
-      children: [
-        { name: "All", href: "/loan-applications" },
-        { name: "Pending", href: "/loan-applications/pending" },
-        { name: "Approved", href: "/loan-applications/approved" },
-        { name: "Due", href: "/loan-applications/due" },
-        { name: "Overdue", href: "/loan-applications/overdue" },
-        { name: "Completed", href: "/loan-applications/paid" },
-      ],
-    },
+    // {
+    //   name: "Loan Applications",
+    //   href: "#",
+    //   icon: BanknotesIcon,
+    //   current: false,
+    //   children: [
+    //     { name: "All", href: "/loan-applications" },
+    //     { name: "Pending", href: "/loan-applications/pending" },
+    //     { name: "Approved", href: "/loan-applications/approved" },
+    //     { name: "Due", href: "/loan-applications/due" },
+    //     { name: "Overdue", href: "/loan-applications/overdue" },
+    //     { name: "Completed", href: "/loan-applications/paid" },
+    //   ],
+    // },
 
-    {
-      name: "Loan Transactions",
-      href: "/loan-transactions",
-      icon: ScaleIcon,
-      current: false,
-    },
+    // {
+    //   name: "Loan Transactions",
+    //   href: "/loan-transactions",
+    //   icon: ScaleIcon,
+    //   current: false,
+    // },
     // {
     //   name: "Commissions",
     //   href: "/commissions",
